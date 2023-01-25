@@ -9,13 +9,51 @@
 */
 
 function strictEquals(valueA, valueB) {
-  console.log(Object.is(valueA, valueB));
+  return (
+    (Object.is(valueA, valueB) &&
+      !(Number.isNaN(valueA) && Number.isNaN(valueB))) ||
+    Number.isInteger(valueA && Number.isInteger(valueB) && !valueA && !valueB) //Todo lo que engloba el return es una expresión booleana
+  );
 }
-strictEquals(1, 1);
-strictEquals(NaN, NaN);
-strictEquals(0, -0);
-strictEquals(-0, 0);
-strictEquals(1, "1");
-strictEquals(true, false);
-strictEquals(false, false);
-strictEquals("water", "oil");
+
+//Funcion refactorizada de la anterior
+
+function isStrictNaN(valueA, valueB) {
+  return Number.isNaN(valueA) && Number.isNaN(valueB);
+}
+
+function isStrictZero(valueA, valueB) {
+  return Number.isInteger(
+    valueA && Number.isInteger(valueB) && !valueA && !valueB
+  );
+}
+
+function areBothValuesNaN(valueA, valueB) {
+  return Number.isNaN(valueA) && Number.isNaN(valueB);
+}
+
+function areIntegers(valueA, valueB) {
+  return Number.isInteger(valueA) && Number.isInteger(valueB);
+}
+
+function isStrictZero(valueA, valueB) {
+  return areIntegers(valueA, valueB) && !valueA && !valueB;
+}
+
+function strictEquals(valueA, valueB) {
+  return (
+    (Object.is(valueA, valueB) && !areBothValuesNaN(valueA, valueB)) ||
+    isStrictZero(valueA, valueB)
+  );
+}
+
+console.log(strictEquals(1, 1)); // true
+console.log(strictEquals(NaN, NaN)); // false
+console.log(strictEquals(0, -0)); // true
+console.log(strictEquals(-0, 0)); // true
+console.log(strictEquals(1, "1")); // false
+console.log(strictEquals(true, false)); // false
+console.log(strictEquals(false, false)); // true
+console.log(strictEquals("Water", "oil")); // false
+console.log(strictEquals("Water", "Water")); // true
+console.log(strictEquals("", 0)); // false
